@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 
 def absoluti_Orirentation_Quaternion(camera,word,scale):
     [came_axis,came_num] = camera.shape

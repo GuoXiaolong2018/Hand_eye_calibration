@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 import cv2.aruco as aruco
 import absolutu_Orientation_Quaternion as aoq
+import DobotDllType as dType
 
 # Configure depth and color streams
 pipeline = rs.pipeline()
@@ -45,6 +46,7 @@ try:
         if input()=="q":
             break
         # Detect aruco in image, then return its
+        color_image = np.asanyarray(color_frame.get_data())
         gray = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
         aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
         parameters =  aruco.DetectorParameters_create()
@@ -55,21 +57,25 @@ try:
             point = np.average(corners[0][0], axis=0)
             depth = depth_frame.get_distance(point[0], point[1])
             xc,yc,zc=rs.rs2_deproject_pixel_to_point(color_intrinsics, [point[0], point[1]], depth)
-            print("相机坐标系中位置:{},{},{}".format(xc,yc,zc))
-            camera.append([xc,yc,zc])
+            print("相机坐标系中位置:{},{},{}".format(1000*xc,1000*yc,1000*zc))
+            camera.append([1000*xc,1000*yc,1000*zc])
         else:
             print("未检测到二维码标志!")
             continue
 
         print("请将机械手移动到二维码标志上方")
         input()
-        xw,yw,zw,rw = dType.GetPose(api)
+        pos = dType.GetPose(api)
+        xw = pos[0]
+        yw = pos[1]
+        zw = pos[2]
         world.append([xw,yw,zw])
+        print("世界坐标系中位置:{},{},{}".format(xw,yw,zw))
 finally:
     camera = np.array(camera).T
     world = np.array(world).T
     doScale = 1
-    s,R,T = aoq.absoluti_Orirentation_Quaternion(camera_cor,word_cor,doScale)
+    s,R,T = aoq.absoluti_Orirentation_Quaternion(camera,world,doScale)
     print("s=",s)
     print("R=",R)
     print("T=",T)
