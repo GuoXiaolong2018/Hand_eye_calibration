@@ -93,6 +93,7 @@ finally:
     with open("calibration_results.json","w") as f:
         json.dump(parameters, f)
     
+    print("标定结果已存入calibration_results.json文件中")
     # Stop streaming
     pipeline.stop()
     dType.DisconnectDobot(api)
