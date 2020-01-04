@@ -47,7 +47,7 @@ try:
             continue
 
         print("正在采集第{}个数据点".format(count))
-        print("请移动二维码标志")
+        print("请移动二维码标志,完成后按任意键继续，按q结束标定")
         if input()=="q":
             break
         # Detect aruco in image, then return its
@@ -68,7 +68,7 @@ try:
             print("未检测到二维码标志!")
             continue
 
-        print("请将机械手移动到二维码标志上方")
+        print("请将机械手移动到二维码标志上方，完成后按任意键继续")
         input()
         pos = dType.GetPose(api)
         xw = pos[0]
