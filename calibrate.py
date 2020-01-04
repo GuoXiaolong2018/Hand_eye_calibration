@@ -5,8 +5,10 @@ import cv2
 import cv2.aruco as aruco
 import absolutu_Orientation_Quaternion as aoq
 import DobotDllType as dType
+import json
 
 # Configure depth and color streams
+print("连接Realsesne")
 pipeline = rs.pipeline()
 config = rs.config()
 config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
@@ -16,6 +18,7 @@ config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 pipeline.start(config)
 
 #dobot init
+print("连接Dobot机械手")
 CON_STR = {
     dType.DobotConnect.DobotConnect_NoError:  "DobotConnect_NoError",
     dType.DobotConnect.DobotConnect_NotFound: "DobotConnect_NotFound",
@@ -32,6 +35,7 @@ if state != dType.DobotConnect.DobotConnect_NoError:
 
 camera = []
 world = []
+count = 0
 
 try:
     while True:
@@ -42,6 +46,7 @@ try:
         if not depth_frame or not color_frame:
             continue
 
+        print("正在采集第{}个数据点".format(count))
         print("请移动二维码标志")
         if input()=="q":
             break
@@ -71,14 +76,23 @@ try:
         zw = pos[2]
         world.append([xw,yw,zw])
         print("世界坐标系中位置:{},{},{}".format(xw,yw,zw))
+        count += 1
 finally:
     camera = np.array(camera).T
     world = np.array(world).T
     doScale = 1
     s,R,T = aoq.absoluti_Orirentation_Quaternion(camera,world,doScale)
+    print("标定完成，标定结果为：")
     print("s=",s)
     print("R=",R)
     print("T=",T)
+    parameters = {}
+    parameters['s'] = s
+    parameters['R'] = R.tolist()
+    parameters['T'] = T.tolist()
+    with open("calibration_results.json","w") as f:
+        json.dump(parameters, f)
+    
     # Stop streaming
     pipeline.stop()
     dType.DisconnectDobot(api)
