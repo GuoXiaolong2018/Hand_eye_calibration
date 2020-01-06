@@ -39,6 +39,11 @@ count = 0
 
 try:
     while True:
+        print("正在采集第{}个数据点".format(count))
+        print("请移动二维码标志,完成后按任意键继续，按q结束标定")
+        if input()=="q":
+            break
+        
         frames = pipeline.wait_for_frames()
         depth_frame = frames.get_depth_frame()
         color_frame = frames.get_color_frame()
@@ -46,10 +51,6 @@ try:
         if not depth_frame or not color_frame:
             continue
 
-        print("正在采集第{}个数据点".format(count))
-        print("请移动二维码标志,完成后按任意键继续，按q结束标定")
-        if input()=="q":
-            break
         # Detect aruco in image, then return its
         color_image = np.asanyarray(color_frame.get_data())
         gray = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
