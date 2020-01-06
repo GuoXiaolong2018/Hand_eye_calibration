@@ -4,6 +4,9 @@ import numpy as np
 import cv2
 import cv2.aruco as aruco
 import absolutu_Orientation_Quaternion as aoq
+import os
+# add DobotDLL to library path to correctly load libraries
+os.environ["LD_LIBRARY_PATH"] += os.pathsep + "/home/js/Documents/dobot_ws/src/dobot/src/DobotDll_x64"
 import DobotDllType as dType
 import json
 
@@ -43,7 +46,7 @@ try:
         print("请移动二维码标志,完成后按任意键继续，按q结束标定")
         if input()=="q":
             break
-        
+
         frames = pipeline.wait_for_frames()
         depth_frame = frames.get_depth_frame()
         color_frame = frames.get_color_frame()
