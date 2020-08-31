@@ -10,6 +10,7 @@ os.environ["LD_LIBRARY_PATH"] += os.pathsep + "/home/js/Documents/dobot_ws/src/d
 import DobotDllType as dType
 import json
 
+#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/js/Documents/dobot_ws/src/dobot/src/DobotDll_x64
 # Configure depth and color streams
 print("连接Realsesne")
 pipeline = rs.pipeline()
